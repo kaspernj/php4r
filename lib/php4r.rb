@@ -143,10 +143,6 @@ module Php4r
     end
   end
   
-  def gtext(string)
-    return GetText._(string)
-  end
-  
   def gettext(string)
     return GetText._(string)
   end
@@ -195,7 +191,7 @@ module Php4r
   end
   
   def http_build_query(obj)
-    return self.http_build_query_rec("", obj)
+    return Php4r.http_build_query_rec("", obj)
   end
   
   def http_build_query_rec(orig_key, obj, first = true)
@@ -210,7 +206,7 @@ module Php4r
         val = "#<Model::#{val.table}::#{val.id}>" if val.respond_to?("is_knj?")
         
         if val.is_a?(Hash) or val.is_a?(Array)
-          url << self.http_build_query_rec(orig_key_str, val, false)
+          url << Php4r.http_build_query_rec(orig_key_str, val, false)
         else
           url << "&" if !first or !first_ele
           url << "#{Php4r.urlencode(orig_key_str)}=#{Php4r.urlencode(val)}"
@@ -230,7 +226,7 @@ module Php4r
         val = "#<Model::#{val.table}::#{val.id}>" if val.respond_to?("is_knj?")
         
         if val.is_a?(Hash) or val.is_a?(Array)
-          url << self.http_build_query_rec(orig_key_str, val, false)
+          url << Php4r.http_build_query_rec(orig_key_str, val, false)
         else
           url << "&" if !first or !first_ele
           url << "#{Php4r.urlencode(orig_key_str)}=#{Php4r.urlencode(val)}"
@@ -393,10 +389,12 @@ module Php4r
   end
   
   def strtotime(date_string, cur = nil)
+    require "datet"
+    
     if !cur
-      cur = Time.new
+      cur = Datet.new
     else
-      cur = Time.at(cur)
+      cur = Datet.new(Time.at(cur))
     end
     
     date_string = date_string.to_s.downcase
@@ -413,28 +411,22 @@ module Php4r
       timestr = match[3]
       number = match[2].to_i
       mathval = match[1]
-      add = nil
+      number = -number if mathval == "-"
       
       if timestr == "years" or timestr == "year"
-        add = ((number.to_i * 3600) * 24) * 365
+        cur.add_years(number)
       elsif timestr == "months" or timestr == "month"
-        add = ((number.to_i * 3600) * 24) * 30
+        cur.add_months(number)
       elsif timestr == "weeks" or timestr == "week"
-        add = (number.to_i * 3600) * 24 * 7
+        cur.add_days(number * 7)
       elsif timestr == "days" or timestr == "day"
-        add = (number.to_i * 3600) * 24
+        cur.add_days(number)
       elsif timestr == "hours" or timestr == "hour"
-        add = number.to_i * 3600
+        cur.add_hours(number)
       elsif timestr == "minutes" or timestr == "minute" or timestr == "min" or timestr == "mints"
-        add = number.to_i * 60
+        cur.add_minutes(timestr)
       elsif timestr == "seconds" or timestr == "second" or timestr == "sec" or timestr == "secs"
-        add = number.to_i
-      end
-      
-      if mathval == "+"
-        cur += add
-      elsif mathval == "-"
-        cur -= add
+        cur.add_seconds(number)
       end
     end
     
@@ -662,17 +654,16 @@ module Php4r
     month = cur_time.month if month == nil
     year = cur_time.year if year == nil
     
-    new_time = Datet.in("#{year.to_s}-#{month.to_s}-#{date.to_s} #{hour.to_s}:#{min.to_s}:#{sec.to_s}")
-    return new_time.to_i
+    return Time.new(year, month, date, hour, min, sec).to_i
   end
   
   def date(date_format, date_input = nil)
     if date_input == nil
       date_object = Time.now
+    elsif date_input.respond_to?(:to_time)
+      date_object = date_input.to_time
     elsif Php4r.is_numeric(date_input)
       date_object = Time.at(date_input.to_i)
-    elsif date_input.is_a?(Datet)
-      date_object = date_input.time
     elsif date_input.is_a?(Time)
       date_object = date_input
     else
@@ -713,7 +704,7 @@ module Php4r
     
     return {
       "dirname" => dirname,
-      "basename" => self.basename(filepath),
+      "basename" => Php4r.basename(filepath),
       "extension" => filepath.split(".").last,
       "filename" => filepath.split("/").last
     }
@@ -738,7 +729,7 @@ module Php4r
   
   # Should return the peak usage of the running script, but I have found no way to detect this... Instead returns the currently memory usage.
   def memory_get_peak_usage
-    return self.memory_get_usage
+    return Php4r.memory_get_usage
   end
   
   def ip2long(ip)
@@ -950,7 +941,7 @@ module Php4r
   
   private
   
-  def self.parse_str_name(seton, varname, value)
+  def Php4r.parse_str_name(seton, varname, value)
     if value.respond_to?(:filename) and value.filename
       realvalue = value
     else
@@ -978,7 +969,7 @@ module Php4r
     end
   end
   
-  def self.parse_str_secname(seton, secname)
+  def Php4r.parse_str_secname(seton, secname)
     secname_empty = false
     if secname.length <= 0
       secname_empty = true
@@ -998,7 +989,7 @@ module Php4r
     return [secname, secname_empty]
   end
   
-  def self.parse_str_name_second(seton, varname, value)
+  def Php4r.parse_str_name_second(seton, varname, value)
     if value.respond_to?(:filename) and value.filename
       realvalue = value
     else

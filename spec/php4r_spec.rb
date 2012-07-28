@@ -36,6 +36,14 @@ describe "Php4r" do
     end
   end
   
+  it "strtotime" do
+    time = Time.new(2010, 1, 1)
+    newtime = Php4r.strtotime("+1 year +1 day +2 months", time.to_i)
+    newtime = Datet.new(Time.at(newtime))
+    
+    raise "Expected dbstr to be '2011-03-02 00:00:00' but it wasnt: '#{newtime.dbstr}'." if newtime.dbstr != "2011-03-02 00:00:00"
+  end
+  
   it "substr" do
     res = Php4r.substr("selcol_15", 7)
     raise "substr should have returned '15' but didnt: '#{res}'." if res != "15"
