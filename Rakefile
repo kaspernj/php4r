@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "php4r"
   gem.homepage = "http://github.com/kaspernj/php4r"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{A lib containing various PHP-functions coded in Ruby.}
+  gem.description = %Q{A lib containing various PHP-functions coded in Ruby. You can either use it or use it as a reference, if you are coming from PHP to Ruby or the other way around.}
   gem.email = "k@spernj.org"
   gem.authors = ["Kasper Johansen"]
   # dependencies defined in Gemfile

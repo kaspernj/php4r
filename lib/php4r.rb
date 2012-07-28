@@ -327,6 +327,8 @@ module Php4r
     File.open(filepath.untaint, "w") do |file|
       file.write(content)
     end
+    
+    return true
   end
   
   def file_get_contents(filepath)
