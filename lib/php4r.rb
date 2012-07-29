@@ -1,7 +1,13 @@
 # coding: utf-8
 
 module Php4r
-  def is_numeric(n) Float n rescue false end
+  def is_numeric(number)
+    if (Float(number) rescue false)
+      return true
+    else
+      return false
+    end
+  end
   
   def call_user_func(*paras)
     if paras[0].is_a?(String)
@@ -662,7 +668,7 @@ module Php4r
       date_object = Time.now
     elsif date_input.respond_to?(:to_time)
       date_object = date_input.to_time
-    elsif Php4r.is_numeric(date_input)
+    elsif (Float(date_input) rescue false)
       date_object = Time.at(date_input.to_i)
     elsif date_input.is_a?(Time)
       date_object = date_input
