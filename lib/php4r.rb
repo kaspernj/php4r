@@ -303,7 +303,12 @@ module Php4r
       end
     end
     
-    _kas.header(key, value) #This is for knjAppServer - knj.
+    begin
+      _hb.header(key, value) #This is for Hayabusa appserver - knj.
+    rescue NameError
+      _kas.header(key, value) #This is for knjappserver - knj.
+    end
+    
     return true
   end
   
