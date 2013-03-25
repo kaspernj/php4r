@@ -950,6 +950,11 @@ module Php4r
     return hash
   end
   
+  def strtr(str, replace_pairs)
+    require "string-strtr"
+    return str.to_s.strtr(replace_pairs)
+  end
+  
   private
   
   def Php4r.parse_str_name(seton, varname, value)

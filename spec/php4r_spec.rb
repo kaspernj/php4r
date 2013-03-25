@@ -103,4 +103,14 @@ describe "Php4r" do
       raise "strtolower did not return expected result: '#{teststr}'."
     end
   end
+  
+  it "strtr" do
+    str = "AA BB"
+    res = Php4r.strtr(str, {
+      "AA" => "BB",
+      "BB" => "AA"
+    })
+    
+    res.should eql("BB AA")
+  end
 end
